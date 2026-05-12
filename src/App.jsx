@@ -341,19 +341,25 @@ function FireParticles({ active }) {
   );
 }
 
-function Metric({ label, value, sub }) {
+function Metric({ label, value, sub, compact = false }) {
   return (
     <GlassCard className="min-w-0">
-      <div className="p-4 md:p-5">
-        <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-white/45 md:text-sm md:tracking-[0.25em]">{label}</div>
-        <div className="break-words text-2xl font-black tracking-tight md:text-4xl">{value}</div>
-        {sub && <div className="mt-2 text-xs leading-relaxed text-white/55 md:text-sm">{sub}</div>}
+      <div className={compact ? "p-3 md:p-5" : "p-4 md:p-5"}>
+        <div className="mb-1 text-[9px] uppercase tracking-[0.2em] text-white/45 md:mb-2 md:text-sm md:tracking-[0.25em]">{label}</div>
+        <div className={compact ? "break-words text-xl font-black tracking-tight md:text-4xl" : "break-words text-2xl font-black tracking-tight md:text-4xl"}>{value}</div>
+        {sub && <div className={compact ? "mt-1 text-[11px] leading-snug text-white/55 md:mt-2 md:text-sm md:leading-relaxed" : "mt-2 text-xs leading-relaxed text-white/55 md:text-sm"}>{sub}</div>}
       </div>
     </GlassCard>
   );
 }
 
 function CharacterStream({ target, input, currentIndex }) {
+  const currentCharRef = useRef(null);
+
+  useEffect(() => {
+    currentCharRef.current?.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+  }, [currentIndex]);
+
   return (
     <div className="relative max-h-[210px] overflow-y-auto rounded-[1.5rem] border border-white/10 bg-black/20 p-3 font-mono text-base leading-[1.85] text-white/35 shadow-inner sm:text-lg md:max-h-[260px] md:rounded-[2rem] md:p-5 md:text-2xl md:leading-relaxed">
       <div className="whitespace-pre-wrap break-words overflow-wrap-anywhere">
@@ -368,6 +374,7 @@ function CharacterStream({ target, input, currentIndex }) {
           return (
             <span
               key={`${char}-${index}`}
+              ref={isCurrent ? currentCharRef : null}
               className={[
                 "relative mx-[0.5px] rounded px-[1px] transition-all duration-150 md:mx-[1px] md:rounded-md md:px-[2px]",
                 isTyped && isCorrect ? "text-white" : "",
@@ -766,10 +773,10 @@ export default function JudgeMyTypingApp() {
             </div>
           </motion.div>
 
-          <div className="grid min-w-0 gap-3 sm:grid-cols-3 xl:grid-cols-1 md:gap-4">
-            <Metric label="Time left" value={`${timeLeft}s`} sub={startedAt ? "How long the keyboard trial has left." : "Starts when you press the first key."} />
-            <Metric label="Clean speed" value={wpm} sub="WPM = words per minute. Only correct letters count here." />
-            <Metric label="Accuracy" value={`${accuracy}%`} sub={`${typoCount} typo${typoCount === 1 ? "" : "s"}. Higher = less keyboard embarrassment.`} />
+          <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-1 md:gap-4">
+            <Metric compact label="Time left" value={`${timeLeft}s`} sub={startedAt ? "Trial time left." : "Starts on first key."} />
+            <Metric compact label="Clean speed" value={wpm} sub="Correct WPM." />
+            <Metric compact label="Accuracy" value={`${accuracy}%`} sub={`${typoCount} typo${typoCount === 1 ? "" : "s"}.`} />
           </div>
         </section>
 
