@@ -17,6 +17,7 @@ const QUOTE_BANK = {
     "Every typo is a small tragedy performed by your fingertips.",
     "The sentence did nothing wrong, but your keyboard attacked it anyway.",
     "A calm person types carefully, but a chaotic person types like the floor is lava.",
+    "Xem moisxa perashki ager chaquchi galobs, pepelam jesti chama sxva saqartvelo sad aris.",
   ],
   long: [
     "A professional-looking website can make even the dumbest idea feel funded by venture capital, especially when the buttons are rounded and the statistics pretend to matter.",
