@@ -298,12 +298,12 @@ function runTinyTests() {
   console.assert(getQuotePool("random").length > getQuotePool("short").length, "Random quote pool should combine options");
 }
 
-if (
-  typeof window !== "undefined" &&
-  ["localhost", "127.0.0.1"].includes(window.location.hostname)
-) {
-  runTinyTests();
-}
+const isDevelopment =
+  typeof process !== "undefined" &&
+  process.env &&
+  process.env.NODE_ENV !== "production";
+
+if (typeof window !== "undefined" && isDevelopment) runTinyTests();
 
 function GlassCard({ children, className = "" }) {
   return (
@@ -417,10 +417,11 @@ export default function JudgeMyTypingApp() {
   const inputRef = useRef(null);
 
   const quotePool = useMemo(() => getQuotePool(textLengthMode), [textLengthMode]);
-  const safeQuoteIndex = quotePool.length ? quoteIndex % quotePool.length : 0;
+  const safeQuoteIndex = quotePool.length > 0 ? quoteIndex % quotePool.length : 0;
   const target = quotePool[safeQuoteIndex] || "";
-  const reachedEnd = hasReachedEnd(text, target);
+  const reachedEnd = target.length > 0 && hasReachedEnd(text, target);
   const complete = text === target;
+  const timedOut = Boolean(startedAt) && timeLeft <= 0;
   const done = reachedEnd || timedOut || Boolean(finishedAt);
   const typoCount = useMemo(() => countTypos(text, target), [text, target]);
   const correctChars = useMemo(() => countCorrectChars(text, target), [text, target]);
@@ -509,12 +510,13 @@ export default function JudgeMyTypingApp() {
   }
 
   function handleMobileTextChange(e) {
-    const nextValue = e.target.value.slice(0, target.length);
-
     if (done) return;
 
-    if (!startedAt && nextValue.length > 0) {
-      setStartedAt(Date.now());
+    const nextValue = e.target.value.slice(0, target.length);
+    const startTime = startedAt || (nextValue.length > 0 ? Date.now() : null);
+
+    if (!startedAt && startTime) {
+      setStartedAt(startTime);
     }
 
     if (nextValue.length < text.length) {
@@ -527,16 +529,16 @@ export default function JudgeMyTypingApp() {
       const oldTypos = countTypos(text, target);
       const newTypos = countTypos(nextValue, target);
 
-      if (newTypos > oldTypos) {
-        playKeySound("error");
-        setLastInsult(randomItem(insults));
-      } else {
-        playKeySound("normal");
-        if (Math.random() > 0.9) setLastInsult(randomItem(praise));
-      }
+      playKeySound(newTypos > oldTypos ? "error" : "normal");
 
-      setText(nextValue);
+      if (newTypos > oldTypos) {
+        setLastInsult(randomItem(insults));
+      } else if (Math.random() > 0.9) {
+        setLastInsult(randomItem(praise));
+      }
     }
+
+    setText(nextValue);
   }
 
   function handleKeyDown(e) {
@@ -570,7 +572,8 @@ export default function JudgeMyTypingApp() {
 
   function reset(nextQuote = null, nextDuration = duration, nextMode = textLengthMode) {
     const pool = getQuotePool(nextMode);
-    const selectedQuote = nextQuote === null ? randomDifferentIndex(pool.length, quoteIndex) : Math.min(nextQuote, pool.length - 1);
+    const currentSafeIndex = pool.length > 0 ? quoteIndex % pool.length : 0;
+    const selectedQuote = nextQuote === null ? randomDifferentIndex(pool.length, currentSafeIndex) : Math.min(nextQuote, pool.length - 1);
     setTextLengthMode(nextMode);
     setQuoteIndex(selectedQuote);
     setDuration(nextDuration);
@@ -582,7 +585,9 @@ export default function JudgeMyTypingApp() {
     setLastInsult(randomItem(idleMessages, "Start typing. The judge is already disappointed."));
     setCardSeed((seed) => seed + 1);
     setResultSeed((seed) => seed + 1);
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => inputRef.current?.focus(), 0);
+    }
   }
 
   function nextQuote() {
@@ -631,7 +636,7 @@ export default function JudgeMyTypingApp() {
               <button
                 key={item}
                 type="button"
-                onClick={() => reset(quoteIndex, item)}
+                onClick={() => reset(safeQuoteIndex, item)}
                 className={`rounded-2xl px-3 py-2 text-sm font-semibold transition active:scale-[0.98] md:px-4 md:py-3 md:text-base ${duration === item ? "bg-white text-slate-950" : "bg-white/10 text-white hover:bg-white/15"}`}
               >
                 {item}s
@@ -792,7 +797,7 @@ export default function JudgeMyTypingApp() {
           <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-1 md:gap-4">
             <Metric compact label="Time left" value={`${timeLeft}s`} sub={startedAt ? "Trial time left." : "Starts on first key."} />
             <Metric compact label="Clean speed" value={wpm} sub="Correct WPM." />
-            <Metric compact label="Raw speed" value={rawWpm} sub="All typed WPM." />
+            <Metric compact label="Raw speed" value={rawWpm} sub="All typed chars." />
             <Metric compact label="Accuracy" value={`${accuracy}%`} sub={`${typoCount} typo${typoCount === 1 ? "" : "s"}.`} />
           </div>
         </section>
