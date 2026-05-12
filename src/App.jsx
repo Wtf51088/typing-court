@@ -345,9 +345,9 @@ function Metric({ label, value, sub }) {
   return (
     <GlassCard className="min-w-0">
       <div className="p-4 md:p-5">
-        <div className="mb-2 text-xs uppercase tracking-[0.25em] text-white/45 md:text-sm">{label}</div>
-        <div className="break-words text-3xl font-black tracking-tight md:text-4xl">{value}</div>
-        {sub && <div className="mt-2 text-sm text-white/55">{sub}</div>}
+        <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-white/45 md:text-sm md:tracking-[0.25em]">{label}</div>
+        <div className="break-words text-2xl font-black tracking-tight md:text-4xl">{value}</div>
+        {sub && <div className="mt-2 text-xs leading-relaxed text-white/55 md:text-sm">{sub}</div>}
       </div>
     </GlassCard>
   );
@@ -355,7 +355,7 @@ function Metric({ label, value, sub }) {
 
 function CharacterStream({ target, input, currentIndex }) {
   return (
-    <div className="relative max-h-[260px] overflow-y-auto rounded-[2rem] border border-white/10 bg-black/20 p-4 font-mono text-xl leading-relaxed text-white/35 shadow-inner md:p-5 md:text-2xl">
+    <div className="relative max-h-[210px] overflow-y-auto rounded-[1.5rem] border border-white/10 bg-black/20 p-3 font-mono text-base leading-[1.85] text-white/35 shadow-inner sm:text-lg md:max-h-[260px] md:rounded-[2rem] md:p-5 md:text-2xl md:leading-relaxed">
       <div className="whitespace-pre-wrap break-words overflow-wrap-anywhere">
         {target.split("").map((char, index) => {
           const typed = input[index];
@@ -369,7 +369,7 @@ function CharacterStream({ target, input, currentIndex }) {
             <span
               key={`${char}-${index}`}
               className={[
-                "relative mx-[1px] rounded-md px-[2px] transition-all duration-150",
+                "relative mx-[0.5px] rounded px-[1px] transition-all duration-150 md:mx-[1px] md:rounded-md md:px-[2px]",
                 isTyped && isCorrect ? "text-white" : "",
                 isTyped && !isCorrect ? "bg-red-500/30 text-red-100 underline decoration-red-300" : "",
                 isCurrent ? "bg-white/20 text-white shadow-[0_0_18px_rgba(255,255,255,0.22)]" : "",
@@ -571,7 +571,7 @@ export default function JudgeMyTypingApp() {
   }
 
   const editorShellClass = [
-    "relative rounded-[2rem] border bg-black/25 p-4 outline-none transition-all duration-300 md:p-5",
+    "relative rounded-[1.5rem] border bg-black/25 p-3 outline-none transition-all duration-300 md:rounded-[2rem] md:p-5",
     "border-white/15 shadow-inner focus-within:border-white/35",
     mood === "bored" ? "scale-[0.98] opacity-70" : "",
     mood === "fire" ? "animate-[shake_0.12s_infinite] border-orange-300/70 shadow-[0_0_45px_rgba(251,146,60,0.35)]" : "",
@@ -579,7 +579,7 @@ export default function JudgeMyTypingApp() {
   ].join(" ");
 
   return (
-    <div className={`min-h-screen overflow-x-hidden ${activeTheme.background} px-3 py-6 text-white md:px-5 md:py-8`}>
+    <div className={`min-h-screen overflow-x-hidden ${activeTheme.background} px-3 py-4 text-white md:px-5 md:py-8`}>
       <style>{`
         @keyframes shake {
           0% { transform: translate(0px, 0px) rotate(0deg); }
@@ -594,7 +594,7 @@ export default function JudgeMyTypingApp() {
       <FireParticles active={mood === "fire"} />
 
       <main className="relative z-10 mx-auto w-full max-w-6xl overflow-visible">
-        <nav className="relative z-[500] mb-6 flex flex-col gap-4 overflow-visible rounded-3xl border border-white/10 bg-white/10 px-4 py-4 shadow-2xl backdrop-blur-2xl sm:flex-row sm:items-center sm:justify-between md:mb-8 md:px-5">
+        <nav className="relative z-[500] mb-4 flex flex-col gap-3 overflow-visible rounded-3xl border border-white/10 bg-white/10 px-4 py-4 shadow-2xl backdrop-blur-2xl sm:flex-row sm:items-center sm:justify-between md:mb-8 md:px-5">
           <div className="flex min-w-0 items-center gap-3">
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white/15 text-xl shadow-inner">⌨</div>
             <div className="min-w-0">
@@ -609,7 +609,7 @@ export default function JudgeMyTypingApp() {
                 key={item}
                 type="button"
                 onClick={() => reset(quoteIndex, item)}
-                className={`rounded-2xl px-4 py-3 font-semibold transition active:scale-[0.98] ${duration === item ? "bg-white text-slate-950" : "bg-white/10 text-white hover:bg-white/15"}`}
+                className={`rounded-2xl px-3 py-2 text-sm font-semibold transition active:scale-[0.98] md:px-4 md:py-3 md:text-base ${duration === item ? "bg-white text-slate-950" : "bg-white/10 text-white hover:bg-white/15"}`}
               >
                 {item}s
               </button>
@@ -619,7 +619,7 @@ export default function JudgeMyTypingApp() {
               <button
                 type="button"
                 onClick={() => setSettingsOpen((open) => !open)}
-                className="rounded-2xl bg-white/10 px-5 py-3 font-semibold text-white transition hover:bg-white/15 active:scale-[0.98]"
+                className="rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15 active:scale-[0.98] md:px-5 md:py-3 md:text-base"
               >
                 Settings
               </button>
@@ -631,7 +631,7 @@ export default function JudgeMyTypingApp() {
                     animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                     exit={{ opacity: 0, y: -8, scale: 0.96, filter: "blur(6px)" }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 top-[calc(100%+0.65rem)] z-[9999] w-80 rounded-[1.5rem] border border-white/15 bg-slate-950/95 p-4 shadow-[0_25px_90px_rgba(0,0,0,0.75)] backdrop-blur-2xl"
+                    className="absolute right-0 top-[calc(100%+0.65rem)] z-[9999] w-[calc(100vw-2rem)] max-w-80 rounded-[1.5rem] border border-white/15 bg-slate-950/95 p-4 shadow-[0_25px_90px_rgba(0,0,0,0.75)] backdrop-blur-2xl"
                   >
                     <div className="mb-4 grid grid-cols-2 gap-4">
                       <div>
@@ -709,24 +709,24 @@ export default function JudgeMyTypingApp() {
             <button
               type="button"
               onClick={() => reset()}
-              className="rounded-2xl bg-white px-5 py-3 font-semibold text-slate-950 shadow-lg transition hover:bg-white/90 active:scale-[0.98]"
+              className="rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-slate-950 shadow-lg transition hover:bg-white/90 active:scale-[0.98] md:px-5 md:py-3 md:text-base"
             >
               Restart
             </button>
           </div>
         </nav>
 
-        <section className="relative z-0 grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(280px,0.75fr)]">
+        <section className="relative z-0 grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(280px,0.75fr)] md:gap-6">
           <motion.div
             animate={mood === "fire" ? { x: [0, -3, 4, -2, 0] } : { x: 0 }}
             transition={{ duration: 0.25, repeat: mood === "fire" ? Infinity : 0 }}
-            className="min-w-0 rounded-[2rem] border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-2xl md:p-8"
+            className="min-w-0 rounded-[1.5rem] border border-white/15 bg-white/10 p-4 shadow-2xl backdrop-blur-2xl md:rounded-[2rem] md:p-8"
             onClick={() => inputRef.current?.focus()}
           >
-            <div className="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div className="mb-5 flex flex-col justify-between gap-3 md:mb-7 md:flex-row md:items-end">
               <div className="min-w-0">
-                <div className="mb-3 text-xs uppercase tracking-[0.45em] text-white/45 md:text-sm">Current Verdict</div>
-                <h1 className="break-words text-4xl font-black leading-[0.95] tracking-[-0.05em] md:text-6xl xl:text-7xl">{getMoodLabel(mood)}</h1>
+                <div className="mb-2 text-[10px] uppercase tracking-[0.32em] text-white/45 md:mb-3 md:text-sm md:tracking-[0.45em]">Current Verdict</div>
+                <h1 className="break-words text-3xl font-black leading-[0.95] tracking-[-0.05em] sm:text-4xl md:text-6xl xl:text-7xl">{getMoodLabel(mood)}</h1>
               </div>
               <button
                 type="button"
@@ -734,7 +734,7 @@ export default function JudgeMyTypingApp() {
                   e.stopPropagation();
                   nextQuote();
                 }}
-                className="shrink-0 rounded-2xl bg-white/10 px-5 py-3 font-semibold text-white transition hover:bg-white/15 active:scale-[0.98]"
+                className="shrink-0 rounded-2xl bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15 active:scale-[0.98] md:px-5 md:text-base"
               >
                 New sentence
               </button>
@@ -754,10 +754,10 @@ export default function JudgeMyTypingApp() {
                 className="absolute inset-0 z-10 h-full w-full resize-none bg-transparent text-transparent opacity-0 caret-transparent outline-none"
                 aria-label="Typing input"
               />
-              <div className="mt-4 text-sm text-white/45">Click here and type. Wrong keys appear in red. Backspace fixes shame. Esc restarts the trial.</div>
+              <div className="mt-3 text-xs leading-relaxed text-white/45 md:mt-4 md:text-sm">Tap here and type. Wrong keys appear in red. Backspace fixes shame.</div>
             </div>
 
-            <div className="mt-5 h-3 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10 md:mt-5 md:h-3">
               <motion.div
                 className="h-full rounded-full bg-white"
                 animate={{ width: `${progress}%` }}
@@ -766,7 +766,7 @@ export default function JudgeMyTypingApp() {
             </div>
           </motion.div>
 
-          <div className="grid min-w-0 gap-4 sm:grid-cols-3 xl:grid-cols-1">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-3 xl:grid-cols-1 md:gap-4">
             <Metric label="Time left" value={`${timeLeft}s`} sub={startedAt ? "How long the keyboard trial has left." : "Starts when you press the first key."} />
             <Metric label="Clean speed" value={wpm} sub="WPM = words per minute. Only correct letters count here." />
             <Metric label="Accuracy" value={`${accuracy}%`} sub={`${typoCount} typo${typoCount === 1 ? "" : "s"}. Higher = less keyboard embarrassment.`} />
@@ -818,23 +818,23 @@ export default function JudgeMyTypingApp() {
           )}
         </AnimatePresence>
 
-        <section className="mt-6 grid gap-4 md:grid-cols-3">
+        <section className="mt-4 grid gap-3 md:mt-6 md:grid-cols-3 md:gap-4">
           {visibleCards.map((card, index) => (
             <GlassCard key={`${card.label}-${cardSeed}-${index}`}>
               <motion.div
-                className="p-5"
+                className="p-4 md:p-5"
                 initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ delay: index * 0.08 }}
               >
-                <div className="mb-2 text-sm uppercase tracking-[0.25em] text-white/45">{card.label}</div>
-                <div className="text-xl font-bold">{card.text}</div>
+                <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-white/45 md:text-sm md:tracking-[0.25em]">{card.label}</div>
+                <div className="text-base font-bold md:text-xl">{card.text}</div>
               </motion.div>
             </GlassCard>
           ))}
         </section>
 
-        <footer className="mt-6 rounded-[2rem] border border-white/15 bg-white/10 p-6 text-center text-lg font-semibold text-white shadow-2xl backdrop-blur-2xl">
+        <footer className="mt-4 rounded-[1.5rem] border border-white/15 bg-white/10 p-4 text-center text-sm font-semibold text-white shadow-2xl backdrop-blur-2xl md:mt-6 md:rounded-[2rem] md:p-6 md:text-lg">
           <AnimatePresence mode="wait">
             <motion.div
               key={lastInsult}
