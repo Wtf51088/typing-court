@@ -298,7 +298,12 @@ function runTinyTests() {
   console.assert(getQuotePool("random").length > getQuotePool("short").length, "Random quote pool should combine options");
 }
 
-if (typeof window !== "undefined") runTinyTests();
+if (
+  typeof window !== "undefined" &&
+  ["localhost", "127.0.0.1"].includes(window.location.hostname)
+) {
+  runTinyTests();
+}
 
 function GlassCard({ children, className = "" }) {
   return (
@@ -412,10 +417,10 @@ export default function JudgeMyTypingApp() {
   const inputRef = useRef(null);
 
   const quotePool = useMemo(() => getQuotePool(textLengthMode), [textLengthMode]);
-  const target = quotePool[quoteIndex] || quotePool[0];
+  const safeQuoteIndex = quotePool.length ? quoteIndex % quotePool.length : 0;
+  const target = quotePool[safeQuoteIndex] || "";
   const reachedEnd = hasReachedEnd(text, target);
   const complete = text === target;
-  const timedOut = Boolean(startedAt) && timeLeft <= 0;
   const done = reachedEnd || timedOut || Boolean(finishedAt);
   const typoCount = useMemo(() => countTypos(text, target), [text, target]);
   const correctChars = useMemo(() => countCorrectChars(text, target), [text, target]);
@@ -465,6 +470,8 @@ export default function JudgeMyTypingApp() {
       if (!audioContextRef.current) audioContextRef.current = new AudioContextClass();
 
       const ctx = audioContextRef.current;
+      if (ctx.state === "suspended") ctx.resume();
+
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
       oscillator.type = profile.type;
@@ -517,9 +524,18 @@ export default function JudgeMyTypingApp() {
     }
 
     if (nextValue.length > text.length) {
-      const added = nextValue.slice(text.length);
-      const char = added[added.length - 1];
-      if (char) addCharacter(char);
+      const oldTypos = countTypos(text, target);
+      const newTypos = countTypos(nextValue, target);
+
+      if (newTypos > oldTypos) {
+        playKeySound("error");
+        setLastInsult(randomItem(insults));
+      } else {
+        playKeySound("normal");
+        if (Math.random() > 0.9) setLastInsult(randomItem(praise));
+      }
+
+      setText(nextValue);
     }
   }
 
@@ -773,9 +789,10 @@ export default function JudgeMyTypingApp() {
             </div>
           </motion.div>
 
-          <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-1 md:gap-4">
+          <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-1 md:gap-4">
             <Metric compact label="Time left" value={`${timeLeft}s`} sub={startedAt ? "Trial time left." : "Starts on first key."} />
             <Metric compact label="Clean speed" value={wpm} sub="Correct WPM." />
+            <Metric compact label="Raw speed" value={rawWpm} sub="All typed WPM." />
             <Metric compact label="Accuracy" value={`${accuracy}%`} sub={`${typoCount} typo${typoCount === 1 ? "" : "s"}.`} />
           </div>
         </section>
