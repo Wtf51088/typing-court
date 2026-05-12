@@ -494,6 +494,28 @@ export default function JudgeMyTypingApp() {
     setText(next);
   }
 
+  function handleMobileTextChange(e) {
+    const nextValue = e.target.value.slice(0, target.length);
+
+    if (done) return;
+
+    if (!startedAt && nextValue.length > 0) {
+      setStartedAt(Date.now());
+    }
+
+    if (nextValue.length < text.length) {
+      playKeySound("backspace");
+      setText(nextValue);
+      return;
+    }
+
+    if (nextValue.length > text.length) {
+      const added = nextValue.slice(text.length);
+      const char = added[added.length - 1];
+      if (char) addCharacter(char);
+    }
+  }
+
   function handleKeyDown(e) {
     if (e.key === "Escape") {
       e.preventDefault();
@@ -549,7 +571,7 @@ export default function JudgeMyTypingApp() {
   }
 
   const editorShellClass = [
-    "rounded-[2rem] border bg-black/25 p-4 outline-none transition-all duration-300 md:p-5",
+    "relative rounded-[2rem] border bg-black/25 p-4 outline-none transition-all duration-300 md:p-5",
     "border-white/15 shadow-inner focus-within:border-white/35",
     mood === "bored" ? "scale-[0.98] opacity-70" : "",
     mood === "fire" ? "animate-[shake_0.12s_infinite] border-orange-300/70 shadow-[0_0_45px_rgba(251,146,60,0.35)]" : "",
@@ -720,14 +742,16 @@ export default function JudgeMyTypingApp() {
 
             <div className={editorShellClass}>
               <CharacterStream target={target} input={text} currentIndex={text.length} />
-              <input
+              <textarea
                 ref={inputRef}
-                value=""
+                value={text}
                 onKeyDown={handleKeyDown}
-                onChange={() => {}}
+                onChange={handleMobileTextChange}
                 autoFocus
                 spellCheck="false"
-                className="absolute h-1 w-1 opacity-0"
+                autoCapitalize="none"
+                autoCorrect="off"
+                className="absolute inset-0 z-10 h-full w-full resize-none bg-transparent text-transparent opacity-0 caret-transparent outline-none"
                 aria-label="Typing input"
               />
               <div className="mt-4 text-sm text-white/45">Click here and type. Wrong keys appear in red. Backspace fixes shame. Esc restarts the trial.</div>
