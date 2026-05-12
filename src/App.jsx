@@ -659,7 +659,7 @@ export default function JudgeMyTypingApp() {
                     animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
                     exit={{ opacity: 0, y: -8, scale: 0.96, filter: "blur(6px)" }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 top-[calc(100%+0.65rem)] z-[9999] w-[calc(100vw-2rem)] max-w-80 rounded-[1.5rem] border border-white/15 bg-slate-950/95 p-4 shadow-[0_25px_90px_rgba(0,0,0,0.75)] backdrop-blur-2xl"
+                    className="fixed left-3 right-3 top-24 z-[9999] max-h-[calc(100vh-7rem)] overflow-y-auto rounded-[1.5rem] border border-white/15 bg-slate-950/95 p-4 shadow-[0_25px_90px_rgba(0,0,0,0.75)] backdrop-blur-2xl sm:absolute sm:left-auto sm:right-0 sm:top-[calc(100%+0.65rem)] sm:w-80 sm:max-w-80"
                   >
                     <div className="mb-4 grid grid-cols-2 gap-4">
                       <div>
